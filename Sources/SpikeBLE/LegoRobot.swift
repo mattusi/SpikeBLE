@@ -9,7 +9,7 @@ import Foundation
 import CoreBluetooth
 import Combine
 
-class LegoRobot: NSObject, ObservableObject {
+public class LegoRobot: NSObject, ObservableObject {
     private var centralManager: CBCentralManager!
     private var legoPer: CBPeripheral?
     private var txChar: CBCharacteristic!
@@ -17,10 +17,10 @@ class LegoRobot: NSObject, ObservableObject {
     private var txDesc: CBDescriptor!
     private var peripheralName: String!
     
-    @Published var lastMessageFromRobot: String = ""
-    @Published var isConnected: Bool = false
+    @Published public var lastMessageFromRobot: String = ""
+    @Published public var isConnected: Bool = false
     
-    init(peripheralName: String) {
+    public init(peripheralName: String) {
         super.init()
         self.peripheralName = peripheralName
         centralManager = CBCentralManager(delegate: self, queue: .main)
@@ -43,13 +43,13 @@ class LegoRobot: NSObject, ObservableObject {
 }
 
 extension LegoRobot: CBCentralManagerDelegate {
-    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+    public func centralManagerDidUpdateState(_ central: CBCentralManager) {
         if central.state == .poweredOn {
             central.scanForPeripherals(withServices: nil, options: nil)
         }
     }
     
-    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
+    public func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         guard peripheral.name != nil else { return }
         
         if peripheral.name == self.peripheralName {
@@ -63,7 +63,7 @@ extension LegoRobot: CBCentralManagerDelegate {
         }
     }
     
-    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+    public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         print("[SpikeBLE] connected to: \(String(describing: peripheral.name))")
         self.isConnected = true
         //now we check if the robot supports UART protocol
@@ -74,7 +74,7 @@ extension LegoRobot: CBCentralManagerDelegate {
     }
     
     //Disconnected Re-starting scan
-    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
+    public func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         if peripheral == legoPer {
             self.isConnected = false
             self.centralManager.scanForPeripherals(withServices: nil, options: nil)
@@ -83,7 +83,7 @@ extension LegoRobot: CBCentralManagerDelegate {
 }
 
 extension LegoRobot: CBPeripheralDelegate {
-    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+    public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         if ((error) != nil) {
             print("[SpikeBLE] Error discovering services: \(error!.localizedDescription)")
             return
@@ -99,7 +99,7 @@ extension LegoRobot: CBPeripheralDelegate {
         print("[SpikeBLE] Discovered Services: \(services)")
     }
     
-    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+    public func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         if ((error) != nil) {
             print("[SpikeBLE] Error discovering services: \(error!.localizedDescription)")
             return
@@ -134,7 +134,7 @@ extension LegoRobot: CBPeripheralDelegate {
     }
     
     
-    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+    public func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         guard characteristic.value != nil else { return }
         if let ASCIIstring = NSString(data: characteristic.value!, encoding: String.Encoding.utf8.rawValue) {
             self.lastMessageFromRobot = "\((ASCIIstring as String))"
@@ -143,7 +143,7 @@ extension LegoRobot: CBPeripheralDelegate {
         
     }
     
-    func peripheral(_ peripheral: CBPeripheral, didDiscoverDescriptorsFor characteristic: CBCharacteristic, error: Error?) {
+    public func peripheral(_ peripheral: CBPeripheral, didDiscoverDescriptorsFor characteristic: CBCharacteristic, error: Error?) {
         if error != nil {
             print("\(error.debugDescription)")
             return
@@ -157,7 +157,7 @@ extension LegoRobot: CBPeripheralDelegate {
         }
     }
     
-    func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
+    public func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
         if (error != nil) {
             print("[SpikeBLE] Error changing notification state:\(String(describing: error?.localizedDescription))")
             
@@ -170,7 +170,7 @@ extension LegoRobot: CBPeripheralDelegate {
         }
     }
     
-    func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
+    public func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
         guard error == nil else {
             print("[SpikeBLE] Error discovering services: error")
             return
@@ -178,7 +178,7 @@ extension LegoRobot: CBPeripheralDelegate {
         print("[SpikeBLE] Message sent")
     }
     
-    func peripheral(_ peripheral: CBPeripheral, didWriteValueFor descriptor: CBDescriptor, error: Error?) {
+    public func peripheral(_ peripheral: CBPeripheral, didWriteValueFor descriptor: CBDescriptor, error: Error?) {
         guard error == nil else {
             print("[SpikeBLE] Error discovering services: error")
             return
