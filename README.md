@@ -5,5 +5,6 @@ This is a simple package for managing the comunication via BLE between an Swift 
 TODO: 
  - Add Documentation.
  - Add install guide.
- - Add link to Spike Project.
+ - Add Exemples
+ - Add new features
  
