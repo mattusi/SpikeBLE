@@ -1,3 +1,9 @@
 # SpikeBLE
 
-A description of this package.
+This is a simple package for managing the comunication via BLE between an Swift App and the Lego Spike Prime platform.
+
+TODO: 
+ - Add Documentation.
+ - Add install guide.
+ - Add link to Spike Project.
+ 
